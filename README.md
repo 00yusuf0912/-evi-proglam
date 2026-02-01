@@ -1,18 +1,18 @@
-# NEXUS PRIME v16.1 - Akıllı Ekran Okuma ve Çeviri Aracı
+# NEXUS PRIME v17.0 - Akıllı Ekran Okuma ve Çeviri Aracı
 
 ## 🎯 Nedir?
 
 NEXUS PRIME, real-time ekran okuma (OCR) ve otomatik çeviri yapan gelişmiş bir Python uygulamasıdır. Özellikle oyunlar, filmler veya video oynatıcılardan altyazıları okumuş olarak anında Türkçeye çevirebilir.
 
-## ✨ Özellikler
+## ✨ Yeni Özellikler (v17.0)
 
-- 🎮 **Oyun Uyumlu**: Neon tema ve overlay penceresi
-- 🔤 **OCR**: Tesseract kullanarak metin okuma
-- 🌍 **Otomatik Çeviri**: Google Translate ile desteklenen her dile çeviri
-- 📊 **Cümle Modu**: Cümle bitene kadar bekleyip toplu çeviri
-- 🖥️ **Platform Uyumlu**: Windows, Linux, macOS
-- 📝 **Logging**: Detaylı log ve hata izlemesi
-- ⚙️ **Yapılandırılabilir**: `config.py` ile tam kontrol
+- 🎮 **Sekme Arayüzü**: Ana, Ayarlar, Geçmiş sekmelerine ayrılmış modern UI
+- ⌨️ **Sistem Hotkeys**: `Ctrl+Shift+S` (Başlat), `Ctrl+Shift+R` (Bölge Seç)
+- 📊 **Çeviri Geçmişi**: Tüm çevirileri JSON'da kaydet, istatistikleri görüntüle
+- 🌍 **10+ Dil Desteği**: Ayarlardan dil seçimi
+- 🎚️ **İleri OCR Kontrolü**: Kontrast, tarama aralığı ayarları
+- 📋 **Otomatik Kopyala**: Çevirilen metni otomatik olarak yapıştır
+- 🔔 **Ses Bildirimi**: Çeviri tamamlandığında bildir (konfigüre edilebilir)
 
 ## 📋 Gereksinimler
 
@@ -45,28 +45,44 @@ brew install tesseract
 python main.py
 ```
 
-### Adımlar
-1. **Pencere Seç**: Açılır listeden okumak istediğiniz pencereyi seçin
-2. **Bölge Tanımla**: "ALTYAZI ALANINI BELİRLE" butonuna tıklayın
-3. **Sürükleme**: Fare ile altyazı alanını seçin (çapraz sürükle)
-4. **Başlat**: "AKILLI ÇEVİRİYİ BAŞLAT" butonuna tıklayın
-5. **Sonuç**: Çeviriler overlay penceresinde görüntülenecek
+### Sekmeler
+
+#### Ana Sekme
+- Hedef pencere seçimi
+- Altyazı bölgesi tanımlama
+- Çeviri başlatma/durdurma
+- Aktivite logu
+
+#### Ayarlar Sekme
+- **Dil Ayarları**: Kaynak ve hedef dil seçimi
+- **OCR Ayarları**: Kontrast, tarama aralığı
+- **Özellikler**: Otomatik kopyala, ses bildirimi
+
+#### Geçmiş Sekme
+- Tüm çevirilerin listesi
+- Toplam çeviri ve karakter istatistikleri
+- Geçmiş temizleme seçeneği
+
+### Hotkeys
+- `Ctrl+Shift+S`: Çeviriyi başlat/durdur
+- `Ctrl+Shift+R`: Altyazı bölgesini seç
 
 ## ⚙️ Yapılandırma
 
 `config.py` dosyasında değiştirebileceğiniz ayarlar:
 
 ```python
+# Versiyon
+version = "17.0"
+
 # OCR Ayarları
 ocr_interval = 0.3  # Kontrol aralığı (saniye)
 sentence_pause_threshold = 1.0  # Cümle bitişi süresi
+contrast_level = 2.5  # Varsayılan kontrast
 
 # Çeviri
 source_language = 'en'  # Kaynak dil
 target_language = 'tr'  # Hedef dil
-
-# Tema
-neon_color = "#00d2ff"  # Ana renk
 ```
 
 ## 🎨 Tema Özelleştirmesi
@@ -77,6 +93,27 @@ neon_color = "#00d2ff"  # Ana renk
 bg_color = "#050505"        # Arka plan
 neon_color = "#00d2ff"      # Neon renk (tuşlar, sınırlar)
 text_color = "white"        # Yazı rengi
+```
+
+## 📊 Çeviri Geçmişi
+
+Tüm çeviriler `translation_history.json` dosyasına otomatik kaydedilir:
+
+```json
+{
+  "history": [
+    {
+      "timestamp": "2026-02-01T12:00:00",
+      "original": "Hello world",
+      "translated": "Merhaba dünya",
+      "language_pair": "en->tr"
+    }
+  ],
+  "stats": {
+    "total_translations": 42,
+    "total_characters": 1337
+  }
+}
 ```
 
 ## 🐛 Sorun Giderme
@@ -91,7 +128,11 @@ text_color = "white"        # Yazı rengi
 ### OCR çalışmıyor
 - Tesseract başarıyla yüklendiğini kontrol edin
 - `nexus.log` dosyasını kontrol edin
-- Contrast ve brightness ayarlarını artırın
+- Contrast ayarını artırın
+
+### Hotkeys çalışmıyor
+- Linux'ta `sudo` izni gerekebilir: `sudo python main.py`
+- Windows'ta izin isteyebilir
 
 ### Çeviri hataları
 - İnternet bağlantısını kontrol edin
@@ -101,33 +142,38 @@ text_color = "white"        # Yazı rengi
 
 Tüm işlemler `nexus.log` dosyasına kaydedilir:
 ```
-2026-02-01 12:00:00 - INFO - Tesseract başarıyla başlatıldı
-2026-02-01 12:00:05 - INFO - Çeviri motoru başlatıldı
+2026-02-01 12:00:00 - INFO - NEXUS PRIME v17.0 başlatıldı
+2026-02-01 12:00:05 - INFO - Hotkeys bağlandı: Ctrl+Shift+S (Başlat), Ctrl+Shift+R (Bölge seç)
+2026-02-01 12:00:10 - INFO - Çeviri motoru başlatıldı
 ```
 
-## 🔧 Geliştirme İçin İpuçları
+## 🔧 Geliştiriciler için
 
-### Hata Ayıklamayı Etkinleştir
+### Debug Modu
 ```python
 import logging
 logging.basicConfig(level=logging.DEBUG)
 ```
 
-### Test Modu (Screenshot kaydet)
+### İstatistikleri Temizle
 ```python
-screenshot.save(f"debug_{int(time.time())}.png")
+from main import TranslationHistory
+h = TranslationHistory()
+h.history = []
+h.stats = {"total_translations": 0, "total_characters": 0}
+h.save()
 ```
 
-## 📊 İyileştirmeler (v16.0 → v16.1)
+## 📊 İyileştirmeler (v16.1 → v17.0)
 
-| Özellik | Eski | Yeni |
-|---------|------|------|
-| Platform Desteği | Sadece Windows | Windows/Linux/macOS |
-| Hata Yönetimi | Zayıf (pass) | Kapsamlı logging |
-| Kod Organizasyonu | Monolitik | Modüler sınıflar |
-| Type Hints | Yok | Tam kapsam |
-| Yapılandırma | Hardcoded | Merkezileştirilmiş |
-| Docstrings | Yok | İngilizce + Türkçe |
+| Özellik | v16.1 | v17.0 |
+|---------|-------|-------|
+| Arayüz | Tek ekran | Sekme sistemi |
+| Hotkeys | Yok | Ctrl+Shift+S/R |
+| Geçmiş | Yok | JSON kayıt + İstatistik |
+| Ayarlar | Hardcoded | GUI'dan değiştirilebilir |
+| Dil Seçimi | Sabit | Dinamik seçim |
+| OCR Kontrol | Sabit | Slider kontrolü |
 
 ## 📜 Lisans
 
@@ -141,4 +187,4 @@ Hataları veya iyileştirmeleri GitHub Issues'de raporlayın.
 
 **Geliştirici**: 00yusuf0912  
 **Son Güncelleme**: Şubat 2026  
-**Versiyon**: 16.1
+**Versiyon**: 17.0

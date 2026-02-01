@@ -13,7 +13,7 @@ class AppConfig:
     """Uygulama yapılandırması"""
     
     # --- VERSIYON ---
-    version = "16.1"
+    version = "17.0"
     
     # --- PENCERE AYARLARI ---
     window_geometry = "1000x700"
