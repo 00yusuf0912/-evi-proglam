@@ -10,15 +10,15 @@ from typing import Optional
 
 
 class AppConfig:
-    """Uygulama yapılandırması"""
+    """Uygulama yapılandırması (v18.0)"""
     
     # --- VERSIYON ---
-    version = "17.0"
+    version = "18.0"
     
     # --- PENCERE AYARLARI ---
-    window_geometry = "1000x700"
-    overlay_geometry = "900x130+400+820"
-    overlay_alpha = 0.9
+    window_geometry = "1100x750"
+    overlay_geometry = "900x150+400+800"
+    overlay_alpha = 0.95
     
     # --- RENKLER (Neon Tema) ---
     bg_color = "#050505"
@@ -39,6 +39,38 @@ class AppConfig:
     # --- ÇEVİRİ AYARLARI ---
     source_language = 'en'
     target_language = 'tr'
+    
+    # --- TEMA AYARLARI (v18.0+) ---
+    available_themes = {
+        "neon": {
+            "primary": "#00d2ff",
+            "secondary": "#ff006e",
+            "accent": "#ffbe0b",
+            "bg": "#0a0a0a",
+            "fg": "#00ff88"
+        },
+        "cyberpunk": {
+            "primary": "#ff006e",
+            "secondary": "#00d2ff",
+            "accent": "#ffbe0b",
+            "bg": "#0d0221",
+            "fg": "#e0aaff"
+        },
+        "matrix": {
+            "primary": "#00ff00",
+            "secondary": "#00cc00",
+            "accent": "#ffff00",
+            "bg": "#000000",
+            "fg": "#00ff00"
+        },
+        "synthwave": {
+            "primary": "#ff006e",
+            "secondary": "#00d2ff",
+            "accent": "#ffd60a",
+            "bg": "#0f0f1e",
+            "fg": "#ffd60a"
+        }
+    }
     
     @staticmethod
     def get_tesseract_path() -> Optional[str]:
