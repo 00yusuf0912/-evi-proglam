@@ -1,18 +1,28 @@
-# NEXUS PRIME v17.0 - Akıllı Ekran Okuma ve Çeviri Aracı
+# NEXUS PRIME v18.0 - Akıllı Ekran Okuma ve Çeviri Aracı
 
 ## 🎯 Nedir?
 
 NEXUS PRIME, real-time ekran okuma (OCR) ve otomatik çeviri yapan gelişmiş bir Python uygulamasıdır. Özellikle oyunlar, filmler veya video oynatıcılardan altyazıları okumuş olarak anında Türkçeye çevirebilir.
 
-## ✨ Yeni Özellikler (v17.0)
+## ✨ Yeni Özellikler (v18.0)
 
-- 🎮 **Sekme Arayüzü**: Ana, Ayarlar, Geçmiş sekmelerine ayrılmış modern UI
-- ⌨️ **Sistem Hotkeys**: `Ctrl+Shift+S` (Başlat), `Ctrl+Shift+R` (Bölge Seç)
-- 📊 **Çeviri Geçmişi**: Tüm çevirileri JSON'da kaydet, istatistikleri görüntüle
-- 🌍 **10+ Dil Desteği**: Ayarlardan dil seçimi
-- 🎚️ **İleri OCR Kontrolü**: Kontrast, tarama aralığı ayarları
-- 📋 **Otomatik Kopyala**: Çevirilen metni otomatik olarak yapıştır
-- 🔔 **Ses Bildirimi**: Çeviri tamamlandığında bildir (konfigüre edilebilir)
+### 🎨 Arayüz Geliştirmeleri
+- **Animasyonlu Başlık**: Dinamik renk geçişleri (Cyan → Magenta → Yellow → Green)
+- **4 Renkli Tema**: Neon, Cyberpunk, Matrix, Synthwave
+- **Pulse Overlay**: Çeviri penceresi sınırı dinamik renk döngüsü
+- **Durum Göstergesi**: 🟢 İDLE / 🔴 ÇALIŞIYOR (canlı güncelleme)
+
+### 📊 İstatistik Dashboard
+- **Real-time Sayaçlar**: Çeviriler, Karakterler, Ortalama
+- **3 Kolon Gösterimi**: Formatlı ve kolay okunabilir
+- **Zaman Damgası**: Geçmiş listesinde her çeviri saati
+- **Dinamik Ortalama**: Otomatik hesaplama
+
+### ⚡ Diğer Yenilikler
+- **Emoji Destek**: Tüm UI'da emojiler
+- **Renkli Loglar**: Terminal çıktısında renk kodlaması
+- **Geliştirilmiş Butonlar**: Daha büyük, daha görünür
+- **Smooth Animasyonlar**: 300-500ms aralıklarla güncelleme
 
 ## 📋 Gereksinimler
 
