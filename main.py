@@ -88,6 +88,9 @@ class AnimationManager:
             }
         }
         return themes.get(theme, themes["neon"])
+
+
+class TesseractManager:
     """Tesseract OCR yönetimi (platform uyumlu)"""
     
     def __init__(self, config: AppConfig):
