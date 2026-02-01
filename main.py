@@ -34,7 +34,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('nexus.log'),
+        logging.FileHandler('nexus.log', encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -123,7 +123,7 @@ class SubtitleOverlay(tk.Toplevel):
         """Pencere özelliklerini yapılandır"""
         self.overrideredirect(True)
         self.attributes("-topmost", True, "-alpha", self.config.overlay_alpha)
-        self.config_window(bg=self.config.bg_color)
+        self.configure(bg=self.config.bg_color)
         self.geometry(self.config.overlay_geometry)
     
     def _setup_ui(self) -> None:
@@ -566,93 +566,137 @@ class NexusSentenceMode(ctk.CTk):
     
     def toggle_translation(self) -> None:
         """Çeviri motorunu aç/kapat"""
-        if not self.selected_region:
-            messagebox.showwarning(
-                "Hata",
-                "Lütfen önce altyazı bölgesini seçiniz!"
-            )
-            return
-        
-        if not self.running:
-            self.running = True
-            self.overlay = SubtitleOverlay(self.config)
-            self.btn_start.configure(
-                text="⏹ DURDUR",
-                fg_color="#ff4b4b",
-                text_color="#fff"
-            )
-            self._log("[BAŞLAT] Çeviri motoru başlatıldı 🎯")
-            threading.Thread(target=self._process_loop, daemon=True).start()
-        else:
-            self.running = False
-            if self.overlay:
-                self.overlay.destroy()
-            self.btn_start.configure(
-                text="▶ BAŞLAT",
-                fg_color=self.config.neon_color,
-                text_color="#000"
-            )
-            self._log("[DURDUR] Çeviri motoru durduruldu ⏹")
+        try:
+            if not self.selected_region:
+                messagebox.showwarning(
+                    "Hata",
+                    "Lütfen önce altyazı bölgesini seçiniz!"
+                )
+                return
+            
+            if not self.running:
+                self.running = True
+                try:
+                    self.overlay = SubtitleOverlay(self.config)
+                    logger.info("Overlay penceresi açıldı")
+                except Exception as e:
+                    logger.error(f"Overlay açma hatası: {e}", exc_info=True)
+                    self.running = False
+                    messagebox.showerror("Hata", f"Overlay açılamadı: {e}")
+                    return
+                
+                self.btn_start.configure(
+                    text="⏹ DURDUR",
+                    fg_color="#ff4b4b",
+                    text_color="#fff"
+                )
+                self._log("[BASLAT] Ceviri motoru baslatildi")
+                threading.Thread(target=self._process_loop, daemon=True).start()
+            else:
+                self.running = False
+                if self.overlay:
+                    try:
+                        self.overlay.destroy()
+                    except:
+                        pass
+                self.btn_start.configure(
+                    text="▶ BASLAT",
+                    fg_color=self.config.neon_color,
+                    text_color="#000"
+                )
+                self._log("[DURDUR] Ceviri motoru durduruldu")
+        except Exception as e:
+            logger.error(f"Toggle translation hatası: {e}", exc_info=True)
     
     def _process_loop(self) -> None:
         """Ana işleme döngüsü"""
         accumulated_text = ""
         last_update_time = time.time()
+        error_count = 0
         
-        while self.running:
-            try:
-                # Ekran görüntüsünü yakala
-                screenshot = pyautogui.screenshot(region=self.selected_region)
-                
-                # Görüntüyü OCR için hazırla
-                processed = self.image_processor.prepare_for_ocr(screenshot, self.config)
-                
-                # Kontrast ayarını uygula
-                enhancer = ImageEnhance.Contrast(processed)
-                processed = enhancer.enhance(self.settings["contrast"])
-                
-                # Metin çıkart
-                current_text = self.tesseract_mgr.extract_text(processed)
-                
-                # Metin değişti mi?
-                if len(current_text) > 1 and current_text != accumulated_text:
-                    accumulated_text = current_text
-                    last_update_time = time.time()
-                
-                # Cümle bitti mi? (1 saniye metin değişmedi mi)
-                elapsed = time.time() - last_update_time
-                if accumulated_text and elapsed > self.config.sentence_pause_threshold:
-                    try:
-                        if self.translator:
-                            translated = self.translator.translate(accumulated_text)
-                            if self.overlay:
-                                self.overlay.update_text(translated)
-                            self._log(f"[✓] {translated}")
-                            self.history.add(accumulated_text, translated, f"{self.settings['source_language']}->{self.settings['target_language']}")
-                            
-                            # Otomatik kopyala
-                            if self.settings["auto_copy"]:
-                                pyautogui.write(translated, interval=0.01)
-                    except Exception as e:
-                        logger.error(f"Çeviri hatası: {e}")
+        try:
+            logger.info("İşleme döngüsü başladı")
+            
+            while self.running:
+                try:
+                    # Ekran görüntüsünü yakala
+                    screenshot = pyautogui.screenshot(region=self.selected_region)
                     
-                    accumulated_text = ""
-                
-                time.sleep(self.settings["ocr_interval"])
-                
-            except Exception as e:
-                logger.error(f"İşleme hatası: {e}")
-                time.sleep(0.5)
+                    # Görüntüyü OCR için hazırla
+                    processed = self.image_processor.prepare_for_ocr(screenshot, self.config)
+                    
+                    # Kontrast ayarını uygula
+                    enhancer = ImageEnhance.Contrast(processed)
+                    processed = enhancer.enhance(self.settings["contrast"])
+                    
+                    # Metin çıkart
+                    current_text = self.tesseract_mgr.extract_text(processed)
+                    
+                    # Metin değişti mi?
+                    if len(current_text) > 1 and current_text != accumulated_text:
+                        accumulated_text = current_text
+                        last_update_time = time.time()
+                    
+                    # Cümle bitti mi? (1 saniye metin değişmedi mi)
+                    elapsed = time.time() - last_update_time
+                    if accumulated_text and elapsed > self.config.sentence_pause_threshold:
+                        try:
+                            if self.translator:
+                                translated = self.translator.translate(accumulated_text)
+                                if self.overlay and self.running:
+                                    self.overlay.update_text(translated)
+                                self._log(f"[CEVIRi] {translated}")
+                                self.history.add(accumulated_text, translated, f"{self.settings['source_language']}->{self.settings['target_language']}")
+                                
+                                # Otomatik kopyala
+                                if self.settings["auto_copy"]:
+                                    try:
+                                        pyautogui.write(translated, interval=0.01)
+                                    except Exception as e:
+                                        logger.warning(f"Otomatik kopyala hatası: {e}")
+                        except Exception as e:
+                            logger.error(f"Çeviri hatası: {e}", exc_info=True)
+                            error_count += 1
+                        
+                        accumulated_text = ""
+                    
+                    time.sleep(self.settings["ocr_interval"])
+                    error_count = 0  # Başarılı olursa counter sıfırla
+                    
+                except Exception as e:
+                    error_count += 1
+                    logger.error(f"İşleme hatası ({error_count}): {e}", exc_info=True)
+                    
+                    if error_count > 10:
+                        logger.error("Çok fazla hata, işleme durduruldu")
+                        self.running = False
+                        break
+                    
+                    time.sleep(1)
+        
+        except Exception as e:
+            logger.error(f"Process loop kritik hatası: {e}", exc_info=True)
+        finally:
+            logger.info("İşleme döngüsü sona erdi")
 
 
 def main():
     """Uygulamayı çalıştır"""
     try:
+        logger.info("=" * 50)
+        logger.info("NEXUS PRIME v17.0 Başlatılıyor...")
+        logger.info("=" * 50)
         app = NexusSentenceMode()
         app.mainloop()
     except Exception as e:
-        logger.critical(f"Uygulama hatası: {e}")
+        logger.critical(f"Uygulama kritik hatası: {e}", exc_info=True)
+        print(f"\n❌ KRİTİK HATA: {e}")
+        print("Detaylar için nexus.log dosyasını kontrol edin")
         sys.exit(1)
+    finally:
+        logger.info("=" * 50)
+        logger.info("NEXUS PRIME Kapatıldı")
+        logger.info("=" * 50)
 
 
 if __name__ == "__main__":
